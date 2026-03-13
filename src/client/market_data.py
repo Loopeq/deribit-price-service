@@ -8,7 +8,6 @@ class MarketDataClient:
         self._session = session
 
     async def get_index_price(self, ticker: str) -> float:
-
         url = f"{self.API_URL}/public/get_index_price"
         params = {"index_name": ticker}
 
@@ -17,13 +16,11 @@ class MarketDataClient:
             data = await response.json()
 
         result = data.get("result")
-
-        if not result:
+        if result is None:
             raise Exception('Field "result" is missing')
 
         price = result.get("index_price")
+        if price is None:
+            raise Exception('Field "index_price" is missing')
 
-        if not price:
-            raise Exception('Field "price" is missing')
-
-        return price
+        return float(price)

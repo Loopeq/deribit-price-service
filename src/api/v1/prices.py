@@ -1,28 +1,27 @@
-from fastapi import APIRouter
-from src.client.market_data import MarketDataClient
-import aiohttp
-import asyncio
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from src.schemas.price import PriceResponse
+from src.repositories.price_repository import PriceRepository
+from src.api.dependencies import get_db
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
-
-
-@router.get("/price")
-async def price(ticker: str):
-    async with aiohttp.ClientSession() as session:
-        client = MarketDataClient(session)
-
-        btc_usd, eth_usd = await asyncio.gather(
-            client.get_index_price("btc_usd"), client.get_index_price("eth_usd")
-        )
-
-    return btc_usd, eth_usd
+router = APIRouter(prefix="/price", tags=["Market"])
 
 
-@router.get("/price/range")
-async def price_range(ticker: str, from_ts: int, to_ts: int):
-    return ticker, from_ts, to_ts
+@router.get("/", response_model=list[PriceResponse])
+async def price(ticker: str, db: AsyncSession = Depends(get_db)):
+    repo = PriceRepository(db)
+    return await repo.get(ticker=ticker)
 
 
-@router.get("/price/latest")
-async def price_latest(ticker: str):
-    return f"latest {ticker}"
+@router.get("/range", response_model=list[PriceResponse])
+async def price_range(
+    ticker: str, from_ts: int, to_ts: int, db: AsyncSession = Depends(get_db)
+):
+    repo = PriceRepository(db)
+    return await repo.get_by(ticker=ticker, from_ts=from_ts, to_ts=to_ts)
+
+
+@router.get("/latest", response_model=PriceResponse)
+async def price_latest(ticker: str, db: AsyncSession = Depends(get_db)):
+    repo = PriceRepository(db)
+    return await repo.get_latest(ticker=ticker)
