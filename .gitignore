@@ -1,0 +1,44 @@
+# Python
+# Byte-code files
+*.pyc
+__pycache__
+
+# Virtual environment
+.env
+env/
+venv/
+env3.*
+
+# Databases
+*.sqlite
+*.db
+test.db
+
+# IDE-specific files (optional, depends on your team's tools)
+# VS Code
+.vscode/
+
+# PyCharm/IntelliJ
+.idea/
+
+# OS generated files
+.DS_Store # macOS
+
+# Build artifacts
+dist/
+build/
+site/
+
+# Logs and temporary files
+log.txt
+*.log
+
+# Docker
+# Ignore build contexts specific to local development if any
+# e.g., if you use a specific local .dockerignore that's different from the deployment one
+
+# Other common ignored files from FastAPI templates
+docs_build/
+site_build/
+docs.zip
+archive.zip
