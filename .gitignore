@@ -3,6 +3,7 @@
 *.pyc
 __pycache__
 
+celerybeat-schedule
 # Virtual environment
 .env
 env/
